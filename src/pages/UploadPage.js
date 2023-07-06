@@ -1,8 +1,9 @@
 import React, {useState} from 'react';
 import axios from 'axios';
 
-function UploadPage() {
+function App() {
     const [selectedFile, setSelectedFile] = useState(null);
+    const [uploadMessage, setUploadMessage] = useState('');
 
     const handleUploadClick = async () => {
         // Open file explorer
@@ -27,24 +28,34 @@ function UploadPage() {
                         'Content-Type': 'multipart/form-data',
                     },
                 });
-                console.log('Video uploaded successfully.');
+                setUploadMessage('Video uploaded successfully.');
                 // Do something after successful upload
             } catch (error) {
                 console.error('Error uploading video:', error);
-                // Handle error
+                if (error.response) {
+                    // Error with response from the server
+                    setUploadMessage(`Error: ${error.response.data}`);
+                    // Display the error message on the screen or handle it accordingly
+                } else {
+                    // Network error or other general error
+                    setUploadMessage('Error: Failed to upload the video.');
+                    // Display a generic error message on the screen or handle it accordingly
+                }
             }
         } else {
             console.log('No file selected');
         }
     };
 
+
     return (
         <div>
             <button onClick={handleUploadClick}>Upload</button>
             {selectedFile && <p>Selected file: {selectedFile.name}</p>}
             <button onClick={uploadVideo}>Submit</button>
+            {uploadMessage && <p>{uploadMessage}</p>}
         </div>
     );
 }
 
-export default UploadPage;
+export default App;
